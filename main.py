@@ -1,5 +1,6 @@
 import os
 import pygame
+import pymorphy2
 import sys
 
 pygame.init()
@@ -10,8 +11,11 @@ bear_size = (560, 400)
 screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 screen.fill(pygame.Color('black'))
 clock = pygame.time.Clock()
+HEAD_COLOR = (183, 175, 147)
 
 FPS = 30
+
+FONT = 'BalsamiqSans-BoldItalic.ttf'
 
 
 def terminate():
@@ -44,15 +48,28 @@ def start_menu():
     pass
 
 
+def change_day_text(day, day_number):
+    return f"МЕДВЕДЬ СПИТ {day_number} {day.make_agree_with_number(day_number).word.upper()}"
+
+
 def start_game():
     running = True
     pygame.mouse.set_visible(False)
+    morph = pymorphy2.MorphAnalyzer()
+    day = morph.parse('день')[0]
     bg = pygame.transform.scale(load_image('bg.jpg'), (width, height))
-    screen.blit(bg, (0, 0))
-    cursor = pygame.transform.scale(load_image('weapon.png'), cursor_size)
     bear = pygame.transform.scale(load_image('bear.png'), bear_size)
+    screen.blit(bg, (0, 0))
+    screen.blit(bear, (width / 2, height / 2))
+    pygame.draw.rect(screen, HEAD_COLOR, (0, 0, width, 0.2 * height))
+    cursor = pygame.transform.scale(load_image('weapon.png'), cursor_size)
     noise = 0
     step = 10
+    font = pygame.font.Font(FONT, 35)
+    day_number = 1
+    line = f"МЕДВЕДЬ СПИТ {day_number} {day.make_agree_with_number(day_number).word.upper()}"
+    string_rendered = font.render(line, 6, pygame.Color('black'))
+    screen.blit(string_rendered, (width / 2, height / 2))
 
     while running:
         for event in pygame.event.get():
@@ -61,6 +78,9 @@ def start_game():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     noise += step
+                    day_number += 1
+                    line = change_day_text(day, day_number)
+                    string_rendered = font.render(line, 6, pygame.Color('black'))
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
@@ -73,6 +93,8 @@ def start_game():
         pygame.display.flip()
         screen.blit(bg, (0, 0))
         screen.blit(bear, (width / 2, height / 2))
+        pygame.draw.rect(screen, HEAD_COLOR, (0, 0, width, 0.185 * height))
+        screen.blit(string_rendered, (0.4 * width, 0.13 * height))
         clock.tick(FPS)
 
 
