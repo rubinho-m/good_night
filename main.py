@@ -78,6 +78,7 @@ def start_game():
     step = 10
     day_number = 1
     all_fly_count = 0
+    over_full = 0
     cool_down = 1000
 
     bear_delta_x, bear_delta_y = 185, 100
@@ -109,15 +110,21 @@ def start_game():
                 flies.append(Fly(fly_pos, 60, 60, vector))
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    noise += step
-                    day_number += 1
+                    cursor_pos = pygame.mouse.get_pos()
+                    for fly in flies:
+                        if cursor_pos[0] <= fly.pos[0] <= cursor_pos[0] + weapon_delta_x and \
+                                cursor_pos[1] <= fly.pos[1] <= cursor_pos[1] + weapon_delta_y:
+                            flies.remove(fly)
 
-                    dark_progress_line_cf -= 0.1
-                    if dark_progress_line_cf < 0:
-                        dark_progress_line_cf = 0
-
-                    line = change_day_text(day, day_number)
-                    string_rendered = font.render(line, 6, pygame.Color('black'))
+                    # noise += step
+                    # day_number += 1
+                    #
+                    # dark_progress_line_cf -= 0.1
+                    # if dark_progress_line_cf < 0:
+                    #     dark_progress_line_cf = 0
+                    #
+                    # line = change_day_text(day, day_number)
+                    # string_rendered = font.render(line, 6, pygame.Color('black'))
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
