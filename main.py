@@ -78,11 +78,15 @@ def start_game():
     step = 10
     day_number = 1
     all_fly_count = 0
+    cool_down = 1000
+
+    bear_delta_x, bear_delta_y = 185, 100
+    weapon_delta_x, weapon_delta_y = 135, 100
 
     flies = []
 
     FLY_EVENT = 30
-    pygame.time.set_timer(FLY_EVENT, 1000)
+    pygame.time.set_timer(FLY_EVENT, cool_down)
 
     font = pygame.font.Font(FONT, 35)
     line = f"МЕДВЕДЬ СПИТ {day_number} {day.make_agree_with_number(day_number).word.upper()}"
